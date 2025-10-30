@@ -1,0 +1,20 @@
+# Site
+title: "Forge"
+description: "The C++ powered static website builder"
+author: "moisnx"
+
+social_links:
+  github: "https://github.com/moisnx/forge"
+  xtwitter: "https://x.com/moisnx"
+
+output_dir: "dist"
+static_dir: "static"
+content_dir: "content"
+templates_dir: "templates"
+
+minify_output: false
+
+minify:
+  js: true
+  css: true
+  html: true

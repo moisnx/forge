@@ -1,0 +1,76 @@
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Build directories
+bin/
+obj/
+build/
+.cache/
+dist/
+
+# IDE-specific files (e.g., Visual Studio)
+.vs/
+*.suo
+*.user
+*.ncb
+*.opensdf
+*.sdf
+*.VC.db
+*.VC.VC.opendb
+
+# CMake related files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+CPackConfig.cmake
+_CPack_Packages/
+
+# Other temporary files
+*~
+*.bak
+*.swp
+
+# Development bundling for node.js
+node_modules/
+dist/
+build/
+.bundle/
+vendor/
+
+# Deployment directories
+.deploy/
+.vercel/
+.now/
+.netlify/
+.out/

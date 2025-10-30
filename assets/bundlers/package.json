@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "csso": "^5.0.5",
+    "html-minifier-terser": "^7.2.0",
+    "htmlnano": "^2.1.5",
+    "install": "^0.13.0",
+    "posthtml": "^0.16.7",
+    "terser": "^5.44.0"
+  }
+}

@@ -1,0 +1,722 @@
+---
+title: "Docs"
+description: "Comprehensive documentation for using and configuring Forge, the modern static site generator."
+---
+
+<section class="py-16 md:py-24 relative overflow-hidden">
+  <div class="container mx-auto px-4 max-w-7xl relative z-10">
+    <div
+      class="inline-block px-4 py-1.5 mb-6 text-xs font-semibold rounded-full bg-primary/10 text-primary border border-primary/20"
+    >
+      DOCUMENTATION
+    </div>
+    <h1
+      class="text-5xl md:text-6xl font-bold mb-6 text-foreground tracking-tight"
+    >
+      Documentation
+    </h1>
+    <p
+      class="text-xl md:text-2xl text-muted-foreground leading-relaxed max-w-3xl"
+    >
+      Complete reference for Forge's features, API, and configuration options.
+    </p>
+  </div>
+</section>
+
+<div class="container mx-auto px-4 max-w-7xl pb-20">
+  <div class="grid lg:grid-cols-4 gap-8">
+    <!-- Sidebar Navigation -->
+    <aside class="lg:col-span-1">
+      <div class="sticky top-24 space-y-6">
+        <div
+          class="rounded-xl bg-card/50 backdrop-blur-sm border border-border/50 p-6"
+        >
+          <h3 class="font-bold text-foreground mb-4">Quick Navigation</h3>
+          <nav class="space-y-2">
+            <a
+              href="#cli"
+              class="block text-muted-foreground hover:text-primary transition-colors py-2 border-l-2 border-transparent hover:border-primary pl-3"
+            >
+              CLI Commands
+            </a>
+            <a
+              href="#templates"
+              class="block text-muted-foreground hover:text-primary transition-colors py-2 border-l-2 border-transparent hover:border-primary pl-3"
+            >
+              Template Syntax
+            </a>
+            <a
+              href="#frontmatter"
+              class="block text-muted-foreground hover:text-primary transition-colors py-2 border-l-2 border-transparent hover:border-primary pl-3"
+            >
+              Frontmatter
+            </a>
+            <a
+              href="#collections"
+              class="block text-muted-foreground hover:text-primary transition-colors py-2 border-l-2 border-transparent hover:border-primary pl-3"
+            >
+              Collections
+            </a>
+            <a
+              href="#config"
+              class="block text-muted-foreground hover:text-primary transition-colors py-2 border-l-2 border-transparent hover:border-primary pl-3"
+            >
+              Configuration
+            </a>
+            <a
+              href="#filters"
+              class="block text-muted-foreground hover:text-primary transition-colors py-2 border-l-2 border-transparent hover:border-primary pl-3"
+            >
+              Template Filters
+            </a>
+          </nav>
+        </div>
+
+        <div
+          class="rounded-xl bg-gradient-to-br from-primary/10 to-accent/10 border border-primary/20 p-6"
+        >
+          <div class="text-2xl mb-3">💬</div>
+          <h3 class="font-bold text-foreground mb-2">Need Help?</h3>
+          <p class="text-sm text-muted-foreground mb-4">
+            Join our community for support and discussions.
+          </p>
+          <a
+            href="https://github.com/yourusername/forge/discussions"
+            class="inline-flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+          >
+            <span>Community Forum</span>
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M17 8l4 4m0 0l-4 4m4-4H3"
+              />
+            </svg>
+          </a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="lg:col-span-3 space-y-16">
+      <!-- CLI Commands Section -->
+      <section id="cli">
+        <div class="flex items-center gap-3 mb-6">
+          <div
+            class="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center text-xl"
+          >
+            ⌨️
+          </div>
+          <h2 class="text-3xl font-bold text-foreground">CLI Commands</h2>
+        </div>
+
+        <p class="text-lg text-muted-foreground mb-8 leading-relaxed">
+          Forge provides a simple command-line interface for managing your
+          static site projects.
+        </p>
+
+        <div class="space-y-6">
+          <!-- forge init -->
+          <div
+            class="rounded-xl bg-card/50 backdrop-blur-sm border border-border/50 p-6"
+          >
+            <div class="flex items-start justify-between mb-4">
+              <div>
+                <h3 class="text-xl font-bold text-foreground mb-2">
+                  forge init
+                </h3>
+                <p class="text-muted-foreground">
+                  Initialize a new Forge project
+                </p>
+              </div>
+              <span
+                class="px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold"
+                >REQUIRED</span
+              >
+            </div>
+
+            <div
+              class="rounded-lg border border-border/50 bg-muted/30 overflow-hidden mb-4"
+            >
+              <pre
+                class="p-4 overflow-x-auto"
+              ><code class="text-sm"><span class="text-primary font-semibold">forge init</span> <span class="text-accent">[project-name]</span> <span class="text-muted-foreground">[options]</span></code></pre>
+            </div>
+
+            <div class="space-y-3">
+              <div class="flex gap-3">
+                <code
+                  class="px-2 py-1 rounded bg-muted text-primary font-mono text-sm flex-shrink-0"
+                  >project-name</code
+                >
+                <span class="text-muted-foreground"
+                  >Name of your new project directory</span
+                >
+              </div>
+              <div class="flex gap-3">
+                <code
+                  class="px-2 py-1 rounded bg-muted text-primary font-mono text-sm flex-shrink-0"
+                  >--template</code
+                >
+                <span class="text-muted-foreground"
+                  >Use a specific project template</span
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- forge serve -->
+          <div
+            class="rounded-xl bg-card/50 backdrop-blur-sm border border-border/50 p-6"
+          >
+            <div class="flex items-start justify-between mb-4">
+              <div>
+                <h3 class="text-xl font-bold text-foreground mb-2">
+                  forge serve
+                </h3>
+                <p class="text-muted-foreground">
+                  Start the development server with hot-reload
+                </p>
+              </div>
+              <span
+                class="px-3 py-1 rounded-full bg-green-500/10 text-green-500 text-xs font-semibold"
+                >DEVELOPMENT</span
+              >
+            </div>
+
+            <div
+              class="rounded-lg border border-border/50 bg-muted/30 overflow-hidden mb-4"
+            >
+              <pre
+                class="p-4 overflow-x-auto"
+              ><code class="text-sm"><span class="text-primary font-semibold">forge serve</span> <span class="text-muted-foreground">[options]</span></code></pre>
+            </div>
+
+            <div class="space-y-3">
+              <div class="flex gap-3">
+                <code
+                  class="px-2 py-1 rounded bg-muted text-primary font-mono text-sm flex-shrink-0"
+                  >--port</code
+                >
+                <span class="text-muted-foreground"
+                  >Specify server port (default: 8080)</span
+                >
+              </div>
+              <div class="flex gap-3">
+                <code
+                  class="px-2 py-1 rounded bg-muted text-primary font-mono text-sm flex-shrink-0"
+                  >--host</code
+                >
+                <span class="text-muted-foreground"
+                  >Specify host address (default: localhost)</span
+                >
+              </div>
+              <div class="flex gap-3">
+                <code
+                  class="px-2 py-1 rounded bg-muted text-primary font-mono text-sm flex-shrink-0"
+                  >--no-reload</code
+                >
+                <span class="text-muted-foreground"
+                  >Disable hot-reload functionality</span
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- forge build -->
+          <div
+            class="rounded-xl bg-card/50 backdrop-blur-sm border border-border/50 p-6"
+          >
+            <div class="flex items-start justify-between mb-4">
+              <div>
+                <h3 class="text-xl font-bold text-foreground mb-2">
+                  forge build
+                </h3>
+                <p class="text-muted-foreground">
+                  Build your site for production
+                </p>
+              </div>
+              <span
+                class="px-3 py-1 rounded-full bg-blue-500/10 text-blue-500 text-xs font-semibold"
+                >PRODUCTION</span
+              >
+            </div>
+
+            <div
+              class="rounded-lg border border-border/50 bg-muted/30 overflow-hidden mb-4"
+            >
+              <pre
+                class="p-4 overflow-x-auto"
+              ><code class="text-sm"><span class="text-primary font-semibold">forge build</span> <span class="text-muted-foreground">[options]</span></code></pre>
+            </div>
+
+            <div class="space-y-3">
+              <div class="flex gap-3">
+                <code
+                  class="px-2 py-1 rounded bg-muted text-primary font-mono text-sm flex-shrink-0"
+                  >--output</code
+                >
+                <span class="text-muted-foreground"
+                  >Specify output directory (default: build/)</span
+                >
+              </div>
+              <div class="flex gap-3">
+                <code
+                  class="px-2 py-1 rounded bg-muted text-primary font-mono text-sm flex-shrink-0"
+                  >--clean</code
+                >
+                <span class="text-muted-foreground"
+                  >Clean output directory before building</span
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- forge clean -->
+          <div
+            class="rounded-xl bg-card/50 backdrop-blur-sm border border-border/50 p-6"
+          >
+            <div class="flex items-start justify-between mb-4">
+              <div>
+                <h3 class="text-xl font-bold text-foreground mb-2">
+                  forge clean
+                </h3>
+                <p class="text-muted-foreground">
+                  Remove build artifacts and cache
+                </p>
+              </div>
+            </div>
+
+            <div
+              class="rounded-lg border border-border/50 bg-muted/30 overflow-hidden"
+            >
+              <pre
+                class="p-4 overflow-x-auto"
+              ><code class="text-sm"><span class="text-primary font-semibold">forge clean</span></code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Template Syntax Section -->
+      <section id="templates">
+        <div class="flex items-center gap-3 mb-6">
+          <div
+            class="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center text-xl"
+          >
+            🎨
+          </div>
+          <h2 class="text-3xl font-bold text-foreground">Template Syntax</h2>
+        </div>
+
+        <p class="text-lg text-muted-foreground mb-8 leading-relaxed">
+          Forge uses a Jinja2-inspired template syntax that's powerful yet easy
+          to learn.
+        </p>
+
+        <div class="space-y-6">
+          <!-- Variables -->
+          <div
+            class="rounded-xl bg-card/50 backdrop-blur-sm border border-border/50 p-6"
+          >
+            <h3 class="text-xl font-bold text-foreground mb-4">Variables</h3>
+            <p class="text-muted-foreground mb-4">
+              Access data from frontmatter, site config, or collections using
+              double curly braces.
+            </p>
+
+            <div
+              class="rounded-lg border border-border/50 bg-muted/30 overflow-hidden"
+            >
+              <pre
+                class="p-4 overflow-x-auto"
+              ><code class="text-sm"><span class="text-muted-foreground">&lt;h1&gt;</span><span class="text-primary">&#123;&#123; page.title &#125;&#125;</span><span class="text-muted-foreground">&lt;/h1&gt;</span>
+
+<span class="text-muted-foreground">&lt;p&gt;By </span><span class="text-primary">&#123;&#123; page.author &#125;&#125;</span><span class="text-muted-foreground"> on </span><span class="text-primary">&#123;&#123; page.date &#125;&#125;</span><span class="text-muted-foreground">&lt;/p&gt;</span>
+<span class="text-muted-foreground">&lt;p&gt;Site: </span><span class="text-primary">&#123;&#123; site.title &#125;&#125;</span><span class="text-muted-foreground">&lt;/p&gt;</span></code></pre>
+            </div>
+          </div>
+
+          <!-- Conditionals -->
+          <div
+            class="rounded-xl bg-card/50 backdrop-blur-sm border border-border/50 p-6"
+          >
+            <h3 class="text-xl font-bold text-foreground mb-4">Conditionals</h3>
+            <p class="text-muted-foreground mb-4">
+              Use if/else statements to conditionally render content.
+            </p>
+
+            <div
+              class="rounded-lg border border-border/50 bg-muted/30 overflow-hidden"
+            >
+              <pre
+                class="p-4 overflow-x-auto"
+              ><code class="text-sm"><span class="text-primary">&#123;% if page.featured %&#125;</span>
+
+<span class="text-muted-foreground">&lt;span class="badge"&gt;Featured&lt;/span&gt;</span>
+<span class="text-primary">&#123;% elif page.draft %&#125;</span>
+<span class="text-muted-foreground">&lt;span class="badge"&gt;Draft&lt;/span&gt;</span>
+<span class="text-primary">&#123;% else %&#125;</span>
+<span class="text-muted-foreground">&lt;span class="badge"&gt;Published&lt;/span&gt;</span>
+<span class="text-primary">&#123;% endif %&#125;</span></code></pre>
+            </div>
+          </div>
+
+          <!-- Loops -->
+          <div
+            class="rounded-xl bg-card/50 backdrop-blur-sm border border-border/50 p-6"
+          >
+            <h3 class="text-xl font-bold text-foreground mb-4">Loops</h3>
+            <p class="text-muted-foreground mb-4">
+              Iterate over collections, lists, or arrays.
+            </p>
+
+            <div
+              class="rounded-lg border border-border/50 bg-muted/30 overflow-hidden"
+            >
+              <pre
+                class="p-4 overflow-x-auto"
+              ><code class="text-sm"><span class="text-muted-foreground">&lt;ul&gt;</span>
+
+<span class="text-primary">&#123;% for post in collections.posts %&#125;</span>
+<span class="text-muted-foreground">&lt;li&gt;</span>
+<span class="text-muted-foreground">&lt;a href="</span><span class="text-primary">&#123;&#123; post.url &#125;&#125;</span><span class="text-muted-foreground">"&gt;</span><span class="text-primary">&#123;&#123; post.title &#125;&#125;</span><span class="text-muted-foreground">&lt;/a&gt;</span>
+<span class="text-muted-foreground">&lt;/li&gt;</span>
+<span class="text-primary">&#123;% endfor %&#125;</span>
+<span class="text-muted-foreground">&lt;/ul&gt;</span></code></pre>
+            </div>
+          </div>
+
+          <!-- Template Inheritance -->
+          <div
+            class="rounded-xl bg-card/50 backdrop-blur-sm border border-border/50 p-6"
+          >
+            <h3 class="text-xl font-bold text-foreground mb-4">
+              Template Inheritance
+            </h3>
+            <p class="text-muted-foreground mb-4">
+              Extend base templates and override specific blocks.
+            </p>
+
+            <div class="space-y-4">
+              <div>
+                <p class="text-sm font-medium text-foreground mb-2">
+                  Base Template (base.html):
+                </p>
+                <div
+                  class="rounded-lg border border-border/50 bg-muted/30 overflow-hidden"
+                >
+                  <pre
+                    class="p-4 overflow-x-auto"
+                  ><code class="text-sm"><span class="text-muted-foreground">&lt;html&gt;</span>
+
+<span class="text-muted-foreground">&lt;head&gt;</span>
+<span class="text-primary">&#123;% block head %&#125;</span>
+<span class="text-muted-foreground">&lt;title&gt;Default Title&lt;/title&gt;</span>
+<span class="text-primary">&#123;% endblock %&#125;</span>
+<span class="text-muted-foreground">&lt;/head&gt;</span>
+<span class="text-muted-foreground">&lt;body&gt;</span>
+<span class="text-primary">&#123;% block content %&#125;&#123;% endblock %&#125;</span>
+<span class="text-muted-foreground">&lt;/body&gt;</span>
+<span class="text-muted-foreground">&lt;/html&gt;</span></code></pre>
+                </div>
+              </div>
+
+              <div>
+                <p class="text-sm font-medium text-foreground mb-2">
+                  Child Template (page.html):
+                </p>
+                <div
+                  class="rounded-lg border border-border/50 bg-muted/30 overflow-hidden"
+                >
+                  <pre
+                    class="p-4 overflow-x-auto"
+                  ><code class="text-sm"><span class="text-primary">&#123;% extends "base.html" %&#125;</span>
+
+<span class="text-primary">&#123;% block head %&#125;</span>
+<span class="text-muted-foreground">&lt;title&gt;</span><span class="text-primary">&#123;&#123; page.title &#125;&#125;</span><span class="text-muted-foreground">&lt;/title&gt;</span>
+<span class="text-primary">&#123;% endblock %&#125;</span>
+
+<span class="text-primary">&#123;% block content %&#125;</span>
+<span class="text-muted-foreground">&lt;h1&gt;</span><span class="text-primary">&#123;&#123; page.title &#125;&#125;</span><span class="text-muted-foreground">&lt;/h1&gt;</span>
+<span class="text-primary">&#123;&#123; content &#125;&#125;</span>
+<span class="text-primary">&#123;% endblock %&#125;</span></code></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Frontmatter Section -->
+      <section id="frontmatter">
+        <div class="flex items-center gap-3 mb-6">
+          <div
+            class="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center text-xl"
+          >
+            📝
+          </div>
+          <h2 class="text-3xl font-bold text-foreground">Frontmatter</h2>
+        </div>
+
+        <p class="text-lg text-muted-foreground mb-8 leading-relaxed">
+          Add metadata to your content files using YAML frontmatter at the top
+          of any markdown file.
+        </p>
+
+        <div
+          class="rounded-xl bg-card/50 backdrop-blur-sm border border-border/50 p-6 mb-6"
+        >
+          <div
+            class="rounded-lg border border-border/50 bg-muted/30 overflow-hidden mb-6"
+          >
+            <pre
+              class="p-4 overflow-x-auto"
+            ><code class="text-sm"><span class="text-muted-foreground/70">---</span>
+
+<span class="text-accent font-semibold">title:</span> My Blog Post
+<span class="text-accent font-semibold">date:</span> 2025-10-29
+<span class="text-accent font-semibold">author:</span> John Doe
+<span class="text-accent font-semibold">tags:</span> [tutorial, forge, static-site]
+<span class="text-accent font-semibold">featured:</span> true
+<span class="text-accent font-semibold">description:</span> Learn how to use Forge
+<span class="text-muted-foreground/70">---</span>
+
+# Your markdown content here...</code></pre>
+          </div>
+
+          <h4 class="font-bold text-foreground mb-4">
+            Common Frontmatter Fields
+          </h4>
+          <div class="space-y-3">
+            <div class="flex gap-3 items-start">
+              <code
+                class="px-2 py-1 rounded bg-muted text-primary font-mono text-sm flex-shrink-0"
+                >title</code
+              >
+              <span class="text-muted-foreground"
+                >Page title (used in templates and metadata)</span
+              >
+            </div>
+            <div class="flex gap-3 items-start">
+              <code
+                class="px-2 py-1 rounded bg-muted text-primary font-mono text-sm flex-shrink-0"
+                >date</code
+              >
+              <span class="text-muted-foreground"
+                >Publication date (ISO format: YYYY-MM-DD)</span
+              >
+            </div>
+            <div class="flex gap-3 items-start">
+              <code
+                class="px-2 py-1 rounded bg-muted text-primary font-mono text-sm flex-shrink-0"
+                >author</code
+              >
+              <span class="text-muted-foreground">Content author name</span>
+            </div>
+            <div class="flex gap-3 items-start">
+              <code
+                class="px-2 py-1 rounded bg-muted text-primary font-mono text-sm flex-shrink-0"
+                >tags</code
+              >
+              <span class="text-muted-foreground"
+                >Array of tags for categorization</span
+              >
+            </div>
+            <div class="flex gap-3 items-start">
+              <code
+                class="px-2 py-1 rounded bg-muted text-primary font-mono text-sm flex-shrink-0"
+                >draft</code
+              >
+              <span class="text-muted-foreground"
+                >Boolean - exclude from production builds</span
+              >
+            </div>
+            <div class="flex gap-3 items-start">
+              <code
+                class="px-2 py-1 rounded bg-muted text-primary font-mono text-sm flex-shrink-0"
+                >template</code
+              >
+              <span class="text-muted-foreground"
+                >Override default template</span
+              >
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="rounded-xl bg-purple-500/10 border border-purple-500/20 p-6 backdrop-blur-sm"
+        >
+          <div class="flex gap-3">
+            <span class="text-2xl flex-shrink-0">💡</span>
+            <div>
+              <div class="font-semibold text-foreground mb-2">
+                Custom Fields
+              </div>
+              <p class="text-muted-foreground leading-relaxed">
+                You can add any custom fields to your frontmatter and access
+                them in templates using
+                <code
+                  class="px-2 py-1 rounded bg-muted/50 text-primary font-mono text-sm"
+                  >&#123;&#123; page.fieldname &#125;&#125;</code
+                >.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Collections Section -->
+      <section id="collections">
+        <div class="flex items-center gap-3 mb-6">
+          <div
+            class="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center text-xl"
+          >
+            📚
+          </div>
+          <h2 class="text-3xl font-bold text-foreground">Collections</h2>
+        </div>
+
+        <p class="text-lg text-muted-foreground mb-8 leading-relaxed">
+          Group related content together with collections. Automatically created
+          from your directory structure.
+        </p>
+
+        <div class="space-y-6">
+          <div
+            class="rounded-xl bg-card/50 backdrop-blur-sm border border-border/50 p-6"
+          >
+            <h3 class="text-xl font-bold text-foreground mb-4">
+              Automatic Collections
+            </h3>
+            <p class="text-muted-foreground mb-4">
+              Forge automatically creates collections based on your content
+              directory structure.
+            </p>
+
+            <div
+              class="rounded-lg bg-muted/30 border border-border/50 p-4 mb-4"
+            >
+              <div class="space-y-2 font-mono text-sm">
+                <div class="text-muted-foreground">content/</div>
+                <div class="text-muted-foreground ml-4">├── posts/</div>
+                <div class="text-primary ml-8">│ ├── first-post.md</div>
+                <div class="text-primary ml-8">│ └── second-post.md</div>
+                <div class="text-muted-foreground ml-4">└── projects/</div>
+                <div class="text-primary ml-8">├── project-a.md</div>
+                <div class="text-primary ml-8">└── project-b.md</div>
+              </div>
+            </div>
+
+            <p class="text-muted-foreground mb-4">
+              This creates two collections accessible as:
+            </p>
+            <div class="space-y-2">
+              <code
+                class="block px-4 py-2 rounded bg-muted text-primary font-mono text-sm"
+                >collections.posts</code
+              >
+              <code
+                class="block px-4 py-2 rounded bg-muted text-primary font-mono text-sm"
+                >collections.projects</code
+              >
+            </div>
+          </div>
+
+          <div
+            class="rounded-xl bg-card/50 backdrop-blur-sm border border-border/50 p-6"
+          >
+            <h3 class="text-xl font-bold text-foreground mb-4">
+              Using Collections
+            </h3>
+
+            <div
+              class="rounded-lg border border-border/50 bg-muted/30 overflow-hidden"
+            >
+              <pre
+                class="p-4 overflow-x-auto"
+              ><code class="text-sm"><span class="text-muted-foreground">&lt;h2&gt;Recent Posts&lt;/h2&gt;</span>
+
+<span class="text-muted-foreground">&lt;ul&gt;</span>
+<span class="text-primary">&#123;% for post in collections.posts | sort(attribute='date', reverse=true) | limit(5) %&#125;</span>
+<span class="text-muted-foreground">&lt;li&gt;</span>
+<span class="text-muted-foreground">&lt;a href="</span><span class="text-primary">&#123;&#123; post.url &#125;&#125;</span><span class="text-muted-foreground">"&gt;</span>
+<span class="text-primary">&#123;&#123; post.title &#125;&#125;</span>
+<span class="text-muted-foreground">&lt;/a&gt;</span>
+<span class="text-muted-foreground">&lt;span&gt;</span><span class="text-primary">&#123;&#123; post.date | date('%B %d, %Y') &#125;&#125;</span><span class="text-muted-foreground">&lt;/span&gt;</span>
+<span class="text-muted-foreground">&lt;/li&gt;</span>
+<span class="text-primary">&#123;% endfor %&#125;</span>
+<span class="text-muted-foreground">&lt;/ul&gt;</span></code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Configuration Section -->
+      <section id="config">
+        <div class="flex items-center gap-3 mb-6">
+          <div
+            class="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center text-xl"
+          >
+            ⚙️
+          </div>
+          <h2 class="text-3xl font-bold text-foreground">Configuration</h2>
+        </div>
+
+        <p class="text-lg text-muted-foreground mb-8 leading-relaxed">
+          Configure your Forge site using a
+          <code
+            class="px-2 py-1 rounded bg-muted text-primary font-mono text-sm"
+            >forge.yaml</code
+          >
+          file in your project root.
+        </p>
+
+        <div
+          class="rounded-xl bg-card/50 backdrop-blur-sm border border-border/50 p-6"
+        >
+          <div
+            class="rounded-lg border border-border/50 bg-muted/30 overflow-hidden mb-6"
+          >
+            <pre
+              class="p-4 overflow-x-auto"
+            ><code class="text-sm"><span class="text-accent font-semibold">site:</span>
+
+<span class="text-accent font-semibold">title:</span> My Awesome Site
+<span class="text-accent font-semibold">description:</span> A site built with Forge
+<span class="text-accent font-semibold">author:</span> John Doe
+<span class="text-accent font-semibold">url:</span> https://example.com
+
+<span class="text-accent font-semibold">paths:</span>
+<span class="text-accent font-semibold">content:</span> content/
+<span class="text-accent font-semibold">templates:</span> templates/
+<span class="text-accent font-semibold">static:</span> static/
+<span class="text-accent font-semibold">output:</span> build/
+
+<span class="text-accent font-semibold">server:</span>
+<span class="text-accent font-semibold">port:</span> 8080
+<span class="text-accent font-semibold">host:</span> localhost
+
+<span class="text-accent font-semibold">build:</span>
+<span class="text-accent font-semibold">exclude_drafts:</span> true
+<span class="text-accent font-semibold">minify:</span> true</code></pre>
+          </div>
+
+          <p class="text-muted-foreground">
+            All configuration values are accessible in templates via
+            <code
+              class="px-2 py-1 rounded bg-muted text-primary font-mono text-sm"
+              >&#123;&#123; site.* &#125;&#125;</code
+            >
+          </p>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
