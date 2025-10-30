@@ -1,0 +1,12 @@
+[submodule "deps/efsw"]
+	path = deps/efsw
+	url = https://github.com/SpartanJ/efsw
+[submodule "deps/yaml-cpp"]
+	path = deps/yaml-cpp
+	url = https://github.com/jbeder/yaml-cpp
+[submodule "deps/md4c"]
+	path = deps/md4c
+	url = https://github.com/mity/md4c
+[submodule "deps/quickjs"]
+	path = deps/quickjs
+	url = https://github.com/bellard/quickjs
