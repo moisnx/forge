@@ -3,8 +3,8 @@
     "build": "bun run build:css && forge build",
     "dev": "forge dev && bun run watch:css",
     "serve": "forge serve",
-    "watch:css": "bunx @tailwindcss/cli -i ./static/styles.css -o ./static/build.css --watch",
-    "build:css": "bunx @tailwindcss/cli -i ./static/styles.css -o ./static/build.css --minify"
+    "watch:css": "bunx @tailwindcss/cli -i ./static/styles.css -o ./static/build.min.css --watch",
+    "build:css": "bunx @tailwindcss/cli -i ./static/styles.css -o ./static/build.min.css --minify"
   },
   "dependencies": {
     "@tailwindcss/cli": "^4.1.16",

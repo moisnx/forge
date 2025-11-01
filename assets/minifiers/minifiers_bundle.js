@@ -60337,52 +60337,138 @@ var __unused = (() => {
   });
 
   // bundle-input.js
-  var Terser = require_bundle_min();
-  var csso = require_cjs2();
-  function minifyHTML(html, options = {}) {
-    let result = html;
-    const preserveBlocks = [];
-    let preserveIndex = 0;
-    result = result.replace(/(<pre\b[^>]*>)([\s\S]*?)(<\/pre>)/gi, (match) => {
-      preserveBlocks.push(match);
-      return `___PRESERVE_${preserveIndex++}___`;
-    });
-    result = result.replace(
-      /(<textarea\b[^>]*>)([\s\S]*?)(<\/textarea>)/gi,
-      (match) => {
-        preserveBlocks.push(match);
-        return `___PRESERVE_${preserveIndex++}___`;
+  var require_bundle_input = __commonJS({
+    "bundle-input.js"(exports, module) {
+      var Terser = require_bundle_min();
+      var csso = require_cjs2();
+      function minifyHTML(html, options = {}) {
+        let result = html;
+        const scriptBlocks = [];
+        let scriptIndex = 0;
+        result = result.replace(
+          /(<script\b[^>]*>)([\s\S]*?)(<\/script>)/gi,
+          (match, openTag, content, closeTag) => {
+            const hasSrc = /\bsrc\s*=/i.test(openTag);
+            if (!hasSrc && content.trim()) {
+              try {
+                let minified = content.replace(/\/\/[^\n]*/g, "").replace(/\/\*[\s\S]*?\*\//g, "").replace(/\s+/g, " ").replace(/\s*([=+\-*/%<>!&|,;:?{}()\[\]])\s*/g, "$1").trim();
+                content = minified;
+              } catch (e) {
+                console.warn("Failed to minify script block:", e.message);
+              }
+            }
+            scriptBlocks.push(openTag + content + closeTag);
+            return `___PRESERVE_SCRIPT_${scriptIndex++}___`;
+          }
+        );
+        const styleBlocks = [];
+        let styleIndex = 0;
+        result = result.replace(
+          /(<style\b[^>]*>)([\s\S]*?)(<\/style>)/gi,
+          (match, openTag, content, closeTag) => {
+            if (content.trim()) {
+              try {
+                const minified = csso.minify(content, {
+                  restructure: true,
+                  comments: false
+                });
+                content = minified.css;
+              } catch (e) {
+                console.warn("Failed to minify style block:", e.message);
+              }
+            }
+            styleBlocks.push(openTag + content + closeTag);
+            return `___PRESERVE_STYLE_${styleIndex++}___`;
+          }
+        );
+        result = result.replace(/\sstyle\s*=\s*"([^"]*)"/gi, (match, content) => {
+          if (content.trim()) {
+            try {
+              const wrapped = `x{${content}}`;
+              const minified = csso.minify(wrapped, {
+                restructure: false,
+                comments: false
+              });
+              const extracted = minified.css.match(/x\{(.*)\}/);
+              if (extracted && extracted[1]) {
+                content = extracted[1];
+              }
+            } catch (e) {
+              content = content.replace(/\s+/g, " ").trim();
+            }
+          }
+          return ` style="${content}"`;
+        });
+        result = result.replace(
+          /\s(on[a-z]+)\s*=\s*"([^"]*)"/gi,
+          (match, attr, content) => {
+            if (content.trim()) {
+              try {
+                let minified = content.replace(/\/\/[^\n]*/g, "").replace(/\/\*[\s\S]*?\*\//g, "").replace(/\s+/g, " ").replace(/\s*([=+\-*/%<>!&|,;:?{}()\[\]])\s*/g, "$1").trim();
+                content = minified;
+              } catch (e) {
+                content = content.replace(/\s+/g, " ").trim();
+              }
+            }
+            return ` ${attr}="${content}"`;
+          }
+        );
+        const preserveBlocks = [];
+        let preserveIndex = 0;
+        result = result.replace(/(<pre\b[^>]*>)([\s\S]*?)(<\/pre>)/gi, (match) => {
+          preserveBlocks.push(match);
+          return `___PRESERVE_${preserveIndex++}___`;
+        });
+        result = result.replace(
+          /(<textarea\b[^>]*>)([\s\S]*?)(<\/textarea>)/gi,
+          (match) => {
+            preserveBlocks.push(match);
+            return `___PRESERVE_${preserveIndex++}___`;
+          }
+        );
+        result = result.replace(/<!--(?!\[if)(?!<!\[endif)[\s\S]*?-->/g, "");
+        result = result.replace(/\s+/g, " ");
+        result = result.replace(/>\s+/g, ">");
+        result = result.replace(/\s+</g, "<");
+        result = result.replace(/\s+>/g, ">");
+        result = result.trim();
+        preserveBlocks.forEach((block, index) => {
+          result = result.replace(`___PRESERVE_${index}___`, block);
+        });
+        scriptBlocks.forEach((block, index) => {
+          result = result.replace(`___PRESERVE_SCRIPT_${index}___`, block);
+        });
+        styleBlocks.forEach((block, index) => {
+          result = result.replace(`___PRESERVE_STYLE_${index}___`, block);
+        });
+        result = result.replace(
+          /\s([a-zA-Z-]+)="([a-zA-Z0-9_\-]+)"/g,
+          (match, attr, value) => {
+            const alwaysQuoted = [
+              "style",
+              "onclick",
+              "onload",
+              "onerror",
+              "onchange",
+              "onsubmit"
+            ];
+            if (alwaysQuoted.includes(attr.toLowerCase())) {
+              return match;
+            }
+            return ` ${attr}=${value}`;
+          }
+        );
+        result = result.replace(/\s[a-zA-Z-]+=""/g, "");
+        result = result.replace(/\s([a-zA-Z-]+)="\1"/g, " $1");
+        return result;
       }
-    );
-    result = result.replace(
-      /(<script\b[^>]*>)([\s\S]*?)(<\/script>)/gi,
-      (match) => {
-        preserveBlocks.push(match);
-        return `___PRESERVE_${preserveIndex++}___`;
+      globalThis.Terser = Terser;
+      globalThis.csso = csso;
+      globalThis.minifyHTML = minifyHTML;
+      if (typeof module !== "undefined" && module.exports) {
+        module.exports = { minifyHTML, Terser, csso };
       }
-    );
-    result = result.replace(
-      /(<style\b[^>]*>)([\s\S]*?)(<\/style>)/gi,
-      (match) => {
-        preserveBlocks.push(match);
-        return `___PRESERVE_${preserveIndex++}___`;
-      }
-    );
-    result = result.replace(/<!--(?!\[if)(?!<!\[endif)[\s\S]*?-->/g, "");
-    result = result.replace(/\s+/g, " ");
-    result = result.replace(/>\s+/g, ">");
-    result = result.replace(/\s+</g, "<");
-    result = result.replace(/\s+>/g, ">");
-    result = result.trim();
-    preserveBlocks.forEach((block, index) => {
-      result = result.replace(`___PRESERVE_${index}___`, block);
-    });
-    result = result.replace(/\s([a-zA-Z-]+)="([a-zA-Z0-9_\-\.]+)"/g, " $1=$2");
-    result = result.replace(/\s[a-zA-Z-]+=""/g, "");
-    result = result.replace(/\s([a-zA-Z-]+)="\1"/g, " $1");
-    return result;
-  }
-  globalThis.Terser = Terser;
-  globalThis.csso = csso;
-  globalThis.minifyHTML = minifyHTML;
+    }
+  });
+  return require_bundle_input();
 })();

@@ -1,0 +1,60 @@
+<main>
+  <article>
+    <header
+      style="
+        margin-bottom: 2rem;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid #e5e5e5;
+      "
+    >
+      <h2 style="font-size: 2rem; font-weight: 400; margin-bottom: 0.5rem">
+        {{ page.title }}
+      </h2>
+      {% if page.date %}
+      <p class="footer-text">{{ page.date | date("long") }}</p>
+      {% endif %} {% if page.author %}
+      <p class="footer-text" style="margin-top: 0.25rem">
+        By {{ page.author }}
+      </p>
+      {% endif %}
+    </header>
+
+    <section class="post-content">{{ content }}</section>
+
+    {% if tags %}
+    <footer
+      style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #e5e5e5"
+    >
+      <p class="footer-text" style="margin-bottom: 0.5rem">Tags:</p>
+      <div style="display: flex; gap: 0.5rem; flex-wrap: wrap">
+        {% for tag in post.tags %}
+        <span
+          style="
+            background-color: #f5f5f5;
+            padding: 0.25rem 0.75rem;
+            border-radius: 3px;
+            font-size: 0.875rem;
+            color: #4a4a4a;
+          "
+          >{{ tag }}</span
+        >
+        {% endfor %}
+      </div>
+    </footer>
+    {% endif %}
+  </article>
+
+  <nav
+    style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #e5e5e5"
+  >
+    <a
+      href="/blog"
+      style="
+        color: #4a4a4a;
+        text-decoration: none;
+        border-bottom: 1px solid #e5e5e5;
+      "
+      >← Back to Blog</a
+    >
+  </nav>
+</main>

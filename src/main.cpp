@@ -42,7 +42,6 @@ int main(int argc, char *argv[]) {
       start_dev_server(builder, project_root);
     } else if (command == "build") {
       SiteBuilder builder(project_root);
-
       builder.discover_content();
       builder.export_static_site();
     } else if (command == "serve") {

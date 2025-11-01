@@ -1,0 +1,36 @@
+---
+title: "Blog - Minimal Template"
+---
+
+<main>
+  <section>
+    <h2>Blog</h2>
+    <p>
+      Thoughts on design, development, and building for the web. All posts are
+      written in Markdown and processed by Forge's content collections.
+    </p>
+  </section>
+
+  {% for post in collections.blog %}
+  <section>
+    <article>
+      <h2>{{ post.title }}</h2>
+      <p class="footer-text" style="margin-bottom: 1rem">
+        {{ post.date | date("long") }}
+      </p>
+      <p>{{ post.description }}</p>
+      <p>
+        <a
+          href="{{ post.url }}"
+          style="
+            color: #4a4a4a;
+            text-decoration: none;
+            border-bottom: 1px solid #e5e5e5;
+          "
+          >Read more →</a
+        >
+      </p>
+    </article>
+  </section>
+  {% endfor %}
+</main>

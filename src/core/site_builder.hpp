@@ -11,6 +11,7 @@
 #include <string>
 #include <sys/types.h>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 namespace fs = std::filesystem;
@@ -32,6 +33,8 @@ private:
   mutable std::shared_mutex pages_mutex_;
 
   std::unordered_map<std::string, std::vector<const PageInfo *>> collections;
+  std::unordered_set<std::string> referencedAssets;
+  std::unordered_set<std::string> availableAssets;
 
   bool has_error_page;
 
@@ -73,6 +76,19 @@ public:
     return collections;
   }
 
+  void trackAssets(const std::string &source);
+  void trackAssetsInCss(const std::string &source, const std::string &path);
+  bool isStaticAsset(const std::string &path);
+  std::string normalizeAssetPath(const std::string &path) {
+    // Remove leaing slashes, resolve  relative paths, etc.
+    std::string normalized = path;
+    if (!normalized.empty() && normalized[0] == '/') {
+      normalized = normalized.substr(1);
+    }
+
+    return normalized;
+  }
+
   const SiteConfig &get_config() const { return config; }
 
   void set_dev_mode(bool dev) { is_dev_mode = dev; }
@@ -81,6 +97,13 @@ public:
   std::string minify_css_content(const std::string &css);
   std::string minify_js_content(const std::string &js);
   std::string minify_html_content(const std::string &html);
+
+  void discover_available_assets();
+  void report_unused_assets();
+  void process_static_files();
+  void log_processed_file(const fs::path &relative, const std::string &note);
+  void print_build_summary(
+      const std::chrono::high_resolution_clock::time_point &start);
 };
 
 #endif

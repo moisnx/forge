@@ -5,13 +5,16 @@
 #include "vendor/termcolor.hpp"
 #include <algorithm>
 #include <chrono>
+#include <filesystem>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <mutex>
+#include <print>
 #include <regex>
 #include <shared_mutex>
 #include <sstream>
+#include <unordered_set>
 
 std::string escape_regex(const std::string &str) {
   static const std::regex special_chars{R"([-[\]{}()*+?.,\^$|#\s])"};
@@ -116,8 +119,247 @@ std::string SiteBuilder::inject_dev_scripts(const std::string &html) {
   }
 }
 
+void SiteBuilder::trackAssets(const std::string &source) {
+  std::regex assetPattern(
+      R"((src|href)=["']([^"']+)["']|url\(["']?([^)']+)["']?\))");
+
+  std::smatch match;
+  auto searchStart = source.cbegin();
+  while (std::regex_search(searchStart, source.cend(), match, assetPattern)) {
+    std::string path = match[2].matched ? match[2].str() : match[3].str();
+
+    if (isStaticAsset(path)) {
+      referencedAssets.insert(normalizeAssetPath(path));
+    }
+    searchStart = match.suffix().first;
+  }
+}
+
+void SiteBuilder::trackAssetsInCss(const std::string &source,
+                                   const std::string &css_relative_path) {
+  std::regex urlPattern(R"(url\(["']?([^)']+)["']?\))");
+  std::smatch match;
+
+  auto searchStart = source.cbegin();
+  while (std::regex_search(searchStart, source.cend(), match, urlPattern)) {
+    std::string url = match[1].str();
+
+    // Skip data URIs and external URLs
+    if (url.find("data:") == 0 || url.find("http://") == 0 ||
+        url.find("https://") == 0) {
+      searchStart = match.suffix().first;
+      continue;
+    }
+
+    // Strip query strings
+    size_t queryPos = url.find('?');
+    if (queryPos != std::string::npos) {
+      url = url.substr(0, queryPos);
+    }
+
+    // Resolve relative to CSS file location
+    fs::path cssDir = fs::path(css_relative_path).parent_path();
+    fs::path resolvedPath = (cssDir / url).lexically_normal();
+
+    std::string normalizedPath = resolvedPath.string();
+
+    if (isStaticAsset(normalizedPath)) {
+      referencedAssets.insert(normalizedPath);
+    }
+
+    searchStart = match.suffix().first;
+  }
+}
+
+bool SiteBuilder::isStaticAsset(const std::string &path) {
+  if (path.empty() || path[0] == '#')
+    return false;
+  if (path.find("http://") == 0 || path.find("https://") == 0)
+    return false;
+  if (path.find("data:") == 0)
+    return false;
+  return true;
+}
+
+void SiteBuilder::discover_available_assets() {
+  availableAssets.clear();
+
+  if (!fs::exists(static_dir))
+    return;
+
+  for (const auto &entry : fs::recursive_directory_iterator(static_dir)) {
+    if (!entry.is_regular_file())
+      continue;
+
+    fs::path relative = fs::relative(entry.path(), project_root);
+    availableAssets.insert(relative.string());
+  }
+}
+
+void SiteBuilder::report_unused_assets() {
+  std::vector<std::string> unused;
+
+  for (const auto &asset : availableAssets) {
+    if (referencedAssets.find(asset) == referencedAssets.end()) {
+      unused.push_back(asset);
+    }
+  }
+
+  if (unused.empty())
+    return;
+
+  std::sort(unused.begin(), unused.end());
+
+  std::cout << "\n"
+            << termcolor::yellow << "⚠ Unused Assets (" << unused.size()
+            << "):" << termcolor::reset << "\n";
+
+  for (const auto &asset : unused) {
+    std::cout << termcolor::bright_cyan << "  • " << asset << termcolor::reset
+              << "\n";
+  }
+}
+
+void SiteBuilder::log_processed_file(const fs::path &relative,
+                                     const std::string &note) {
+  std::cout << termcolor::bright_green << "  ✓ " << termcolor::reset
+            << termcolor::white << relative.string();
+
+  if (!note.empty()) {
+    std::cout << termcolor::bright_blue << " (" << note << ")";
+  }
+
+  std::cout << termcolor::reset << "\n";
+}
+
+void SiteBuilder::process_static_files() {
+  auto static_start = std::chrono::high_resolution_clock::now();
+
+  std::cout << "\n"
+            << termcolor::bright_cyan << "📦 Processing static files"
+            << termcolor::reset << "\n";
+
+  fs::path static_out = output_dir / "static";
+  fs::create_directories(static_out);
+
+  int css_count = 0, js_count = 0, html_count = 0, other_count = 0, skipped = 0;
+
+  for (const auto &entry : fs::recursive_directory_iterator(static_dir)) {
+    if (!entry.is_regular_file())
+      continue;
+
+    fs::path relative = fs::relative(entry.path(), static_dir);
+    fs::path relativePath = fs::relative(entry.path(), project_root);
+    fs::path out_path = static_out / relative;
+    std::string ext = entry.path().extension().string();
+
+    // Check if asset is referenced (skip unreferenced CSS, fonts, images)
+    bool should_skip = false;
+    if (ext == ".css" || ext == ".woff" || ext == ".woff2" || ext == ".png" ||
+        ext == ".jpg" || ext == ".svg") {
+      if (referencedAssets.find(relativePath.string()) ==
+          referencedAssets.end()) {
+        skipped++;
+        should_skip = true;
+      }
+    }
+    // DO NOT minify already minified files
+    if (entry.path().filename().string().find(".min.") != std::string::npos) {
+      write_file(out_path, read_file(entry.path()));
+      other_count++;
+      log_processed_file(relative, "copied (minified)");
+      continue;
+    }
+
+    if (should_skip)
+      continue;
+
+    if (out_path.has_parent_path()) {
+      fs::create_directories(out_path.parent_path());
+    }
+
+    if (ext == ".css") {
+      std::string css_content = read_file(entry.path());
+      std::string minified = minify_css_content(css_content);
+      trackAssetsInCss(minified, relativePath.string());
+      write_file(out_path, minified);
+      css_count++;
+      log_processed_file(relative, "minified");
+
+    } else if (ext == ".js") {
+      std::string js_content = read_file(entry.path());
+      std::string minified = minify_js_content(js_content);
+      write_file(out_path, minified);
+      js_count++;
+      log_processed_file(relative, "minified");
+
+    } else if (ext == ".html") {
+      std::string html_content = read_file(entry.path());
+      std::string minified = minify_html_content(html_content);
+      write_file(out_path, minified);
+      html_count++;
+      log_processed_file(relative, "minified");
+
+    } else {
+      fs::copy_file(entry.path(), out_path,
+                    fs::copy_options::overwrite_existing);
+      other_count++;
+      log_processed_file(relative, "");
+    }
+  }
+
+  auto static_end = std::chrono::high_resolution_clock::now();
+  auto static_duration = std::chrono::duration_cast<std::chrono::milliseconds>(
+      static_end - static_start);
+
+  std::cout << termcolor::bright_green << "✓ " << termcolor::reset
+            << "Processed " << (css_count + js_count + html_count + other_count)
+            << " static files";
+
+  if (skipped > 0) {
+    std::cout << " (" << skipped << " skipped)";
+  }
+
+  if (minification_enabled && (css_count + js_count > 0)) {
+    std::cout << " (" << css_count << " CSS, " << js_count << " JS minified)";
+  }
+
+  std::cout << termcolor::bright_blue << " in " << static_duration.count()
+            << "ms" << termcolor::reset << "\n";
+}
+
+void SiteBuilder::print_build_summary(
+    const std::chrono::high_resolution_clock::time_point &start) {
+  auto end = std::chrono::high_resolution_clock::now();
+  auto duration =
+      std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+
+  std::cout << "\n"
+            << termcolor::bright_green
+            << "╔═══════════════════════════════════════════╗\n"
+            << "║           ✨ Build Complete!              ║\n"
+            << "╠═══════════════════════════════════════════╣"
+            << termcolor::reset << "\n";
+  std::cout << termcolor::bright_green << "║  " << termcolor::reset
+            << "Output: " << termcolor::bright_white << std::setw(32)
+            << std::left << output_dir.string() << termcolor::reset
+            << termcolor::bright_green << "║" << termcolor::reset << "\n";
+  std::cout << termcolor::bright_green << "║  " << termcolor::reset
+            << "Time:   " << termcolor::bright_white << std::setw(32)
+            << std::left << (std::to_string(duration.count()) + "ms")
+            << termcolor::reset << termcolor::bright_green << "║"
+            << termcolor::reset << "\n";
+  std::cout << termcolor::bright_green << "║  " << termcolor::reset
+            << "Pages:  " << termcolor::bright_white << std::setw(32)
+            << std::left << std::to_string(pages.size()) << termcolor::reset
+            << termcolor::bright_green << "║" << termcolor::reset << "\n";
+  std::cout << termcolor::bright_green
+            << "╚═══════════════════════════════════════════╝"
+            << termcolor::reset << "\n\n";
+}
+
 void SiteBuilder::discover_content() {
-  auto start = std::chrono::high_resolution_clock::now();
+  // auto start = std::chrono::high_resolution_clock::now();
 
   std::unique_lock<std::shared_mutex> lock(pages_mutex_);
 
@@ -388,6 +630,8 @@ void SiteBuilder::build_page(const std::string &url) {
     out_path += "/index.html";
   }
 
+  trackAssets(html);
+
   write_file(out_path, html);
 }
 
@@ -449,115 +693,20 @@ void SiteBuilder::export_static_site() {
   }
   fs::create_directories(output_dir);
 
+  // Discover available assets before building
+  discover_available_assets();
+
+  // Build all pages (tracks referenced assets)
   build_all();
 
+  // Process static files
   if (fs::exists(static_dir)) {
-    auto static_start = std::chrono::high_resolution_clock::now();
-
-    std::cout << "\n"
-              << termcolor::bright_cyan << "📦 Processing static files"
-              << termcolor::reset << "\n";
-
-    fs::path static_out = output_dir / "static";
-    fs::create_directories(static_out);
-
-    int css_count = 0, js_count = 0, html_count = 0, other_count = 0;
-
-    for (const auto &entry : fs::recursive_directory_iterator(static_dir)) {
-      if (!entry.is_regular_file())
-        continue;
-
-      fs::path relative = fs::relative(entry.path(), static_dir);
-      fs::path out_path = static_out / relative;
-
-      if (out_path.has_parent_path()) {
-        fs::create_directories(out_path.parent_path());
-      }
-
-      std::string ext = entry.path().extension().string();
-
-      if (ext == ".css") {
-
-        std::string css_content = read_file(entry.path());
-        std::string minified = minify_css_content(css_content);
-        write_file(out_path, minified);
-        css_count++;
-        std::cout << termcolor::bright_green << "  ✓ " << termcolor::reset
-                  << termcolor::white << relative.string()
-                  << termcolor::bright_blue << " (minified)" << termcolor::reset
-                  << "\n";
-      } else if (ext == ".js") {
-
-        std::string js_content = read_file(entry.path());
-        std::string minified = minify_js_content(js_content);
-        write_file(out_path, minified);
-        js_count++;
-        std::cout << termcolor::bright_green << "  ✓ " << termcolor::reset
-                  << termcolor::white << relative.string()
-                  << termcolor::bright_blue << " (minified)" << termcolor::reset
-                  << "\n";
-      } else if (ext == ".html") {
-
-        std::string html_content = read_file(entry.path());
-        std::string minified = minify_html_content(html_content);
-        write_file(out_path, minified);
-        html_count++;
-        std::cout << termcolor::bright_green << "  ✓ " << termcolor::reset
-                  << termcolor::white << relative.string()
-                  << termcolor::bright_blue << " (minified)" << termcolor::reset
-                  << "\n";
-      }
-
-      else {
-
-        fs::copy_file(entry.path(), out_path,
-                      fs::copy_options::overwrite_existing);
-        other_count++;
-        std::cout << termcolor::bright_green << "  ✓ " << termcolor::reset
-                  << termcolor::white << relative.string() << termcolor::reset
-                  << "\n";
-      }
-    }
-
-    auto static_end = std::chrono::high_resolution_clock::now();
-    auto static_duration =
-        std::chrono::duration_cast<std::chrono::milliseconds>(static_end -
-                                                              static_start);
-
-    std::cout << termcolor::bright_green << "✓ " << termcolor::reset
-              << "Processed " << (css_count + js_count + other_count)
-              << " static files";
-    if (minification_enabled) {
-      std::cout << " (" << css_count << " CSS, " << js_count << " JS minified)";
-    }
-    std::cout << termcolor::bright_blue << " in " << static_duration.count()
-              << "ms" << termcolor::reset << "\n";
+    process_static_files();
   }
 
-  auto total_end = std::chrono::high_resolution_clock::now();
-  auto total_duration = std::chrono::duration_cast<std::chrono::milliseconds>(
-      total_end - total_start);
+  // Report unused assets
+  report_unused_assets();
 
-  std::cout << "\n"
-            << termcolor::bright_green
-            << "╔═══════════════════════════════════════════╗\n"
-            << "║           ✨ Build Complete!              ║\n"
-            << "╠═══════════════════════════════════════════╣"
-            << termcolor::reset << "\n";
-  std::cout << termcolor::bright_green << "║  " << termcolor::reset
-            << "Output: " << termcolor::bright_white << std::setw(32)
-            << std::left << output_dir.string() << termcolor::reset
-            << termcolor::bright_green << "║" << termcolor::reset << "\n";
-  std::cout << termcolor::bright_green << "║  " << termcolor::reset
-            << "Time:   " << termcolor::bright_white << std::setw(32)
-            << std::left << (std::to_string(total_duration.count()) + "ms")
-            << termcolor::reset << termcolor::bright_green << "║"
-            << termcolor::reset << "\n";
-  std::cout << termcolor::bright_green << "║  " << termcolor::reset
-            << "Pages:  " << termcolor::bright_white << std::setw(32)
-            << std::left << std::to_string(pages.size()) << termcolor::reset
-            << termcolor::bright_green << "║" << termcolor::reset << "\n";
-  std::cout << termcolor::bright_green
-            << "╚═══════════════════════════════════════════╝"
-            << termcolor::reset << "\n\n";
+  // Print summary
+  print_build_summary(total_start);
 }

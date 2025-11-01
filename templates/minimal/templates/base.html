@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ page.title }}</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Minimal</h1>
+        <p class="subtitle">A clean Forge template</p>
+        <nav>
+          <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/blog">Blog</a></li>
+          </ul>
+        </nav>
+      </header>
+      {{ content}}
+      <footer class="container">
+        <div class="footer-content">
+          <p class="footer-text">© 2025 Built with Minimal</p>
+          <p class="builder">
+            Powered by <a href="https://github.com/moisnx/forge">Forge</a>
+          </p>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>

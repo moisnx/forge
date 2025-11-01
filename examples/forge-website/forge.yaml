@@ -12,7 +12,7 @@ static_dir: "static"
 content_dir: "content"
 templates_dir: "templates"
 
-minify_output: false
+minify_output: true
 
 minify:
   js: true

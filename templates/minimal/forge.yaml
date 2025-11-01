@@ -1,0 +1,22 @@
+site_title: "My Minimal Forge Site"
+site_description: "A minimal static site built with Forge"
+site_author: "Your Name"
+
+output_dir: "dist"
+static_dir: "static"
+content_dir: "content"
+templates_dir: "templates"
+
+# Collections
+collections:
+  blog:
+    sort_by: "date"
+    sort_order: "desc"
+    template: "post.html"
+    url_pattern: "/blog/{{slug}}/"
+# Build Settings
+
+# Minify Build Output - This is optional.
+# In bigger sites, you might want to disable this for faster builds.
+# Currently breaks tailwindcss output. So disabling for now.
+minify_output: true
